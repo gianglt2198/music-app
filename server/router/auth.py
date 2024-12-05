@@ -16,7 +16,7 @@ def post_users(user: UserCreate, db: Session = Depends(get_db)):
         raise HTTPException(status_code=400, detail='Email already registered')
 
     hashed_password = bcrypt.hashpw(user.password.encode('utf-8'), bcrypt.gensalt())
-    user_db = User(id=str(uuid.uuid4()), username=user.username, email=user.email, password=hashed_password)
+    user_db = User(id=str(uuid.uuid4()), name=user.name, email=user.email, password=hashed_password)
     db.add(user_db)
     db.commit()
     db.refresh(user_db)
