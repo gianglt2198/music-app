@@ -1,0 +1,20 @@
+
+services:
+  db:
+    image: postgres:latest
+    container_name: music_db
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: musicapp
+    ports:
+      - "5433:5432"
+    volumes:
+      - ./data:/var/lib/postgresql/data
+    networks:
+      - music-app-network
+    
+
+networks:
+  music-app-network:
+    driver: bridge
