@@ -1,21 +1,24 @@
 import 'package:client/core/themes/app_pallete.dart';
-import 'package:client/data/repositories/auth_repository.dart';
+import 'package:client/features/auth/repositories/auth_repository.dart';
 import 'package:client/features/auth/controllers/auth_controler.dart';
+import 'package:client/features/auth/screens/login_screen.dart';
+import 'package:client/features/auth/viewmodel/auth_viewmodel.dart';
 import 'package:client/features/auth/widgets/custom_text_field.dart';
 import 'package:client/features/auth/widgets/error_text.dart';
 import 'package:client/features/auth/widgets/form_container.dart';
 import 'package:client/features/auth/widgets/loading_button.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-class SignUpScreen extends StatefulWidget {
+class SignUpScreen extends ConsumerStatefulWidget {
   const SignUpScreen({super.key});
 
   @override
-  State<SignUpScreen> createState() => _SignUpScreenState();
+  ConsumerState<SignUpScreen> createState() => _SignUpScreenState();
 }
 
-class _SignUpScreenState extends State<SignUpScreen> {
+class _SignUpScreenState extends ConsumerState<SignUpScreen> {
   final _formKey = GlobalKey<FormState>();
   final _nameController = TextEditingController();
   final _emailController = TextEditingController();
@@ -61,19 +64,28 @@ class _SignUpScreenState extends State<SignUpScreen> {
 
   Future<void> _handleSignUp() async {
     if (_formKey.currentState!.validate()) {
-      final success = await _authController.signUp(
-        _emailController.text,
-        _passwordController.text,
-      );
+      await ref.read(authViewModelProvider.notifier).signUpUser(
+            email: _emailController.text,
+            password: _passwordController.text,
+            name: _nameController.text,
+          );
 
-      if (success && mounted) {
-        // Navigator.of(context).pushReplacementNamed('/home');
-      }
+      // final success = await _authController.signUp(
+      //   _emailController.text,
+      //   _passwordController.text,
+      // );
+
+      // if (success && mounted) {
+      //   // Navigator.of(context).pushReplacementNamed('/home');
+      // }
     }
   }
 
   @override
   Widget build(BuildContext context) {
+    final isLoading = ref
+        .watch(authViewModelProvider.select((val) => val?.isLoading == true));
+
     return Scaffold(
         appBar: AppBar(),
         body: FormContainer(formKey: _formKey, children: [
@@ -119,8 +131,10 @@ class _SignUpScreenState extends State<SignUpScreen> {
                       fontWeight: FontWeight.bold,
                     ),
                     recognizer: TapGestureRecognizer()
-                      ..onTap =
-                          () => Navigator.of(context).pushNamed('/sign-in')),
+                      ..onTap = () => Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => const LoginScreen()))),
               ])),
         ]));
   }

@@ -1,9 +1,11 @@
 import 'package:client/core/themes/app_pallete.dart';
-import 'package:client/data/repositories/auth_repository.dart';
+import 'package:client/features/auth/repositories/auth_repository.dart';
 import 'package:client/features/auth/controllers/auth_controler.dart';
+import 'package:client/features/auth/screens/signup_screen.dart';
 import 'package:client/features/auth/widgets/custom_text_field.dart';
 import 'package:client/features/auth/widgets/form_container.dart';
 import 'package:client/features/auth/widgets/loading_button.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -92,17 +94,18 @@ class _LoginScreenState extends State<LoginScreen> {
               text: TextSpan(
                   text: 'Don\'t have an account? ',
                   style: Theme.of(context).textTheme.titleMedium,
-                  children: const [
+                  children: [
                     TextSpan(
-                      text: 'Sign Up',
-                      style: TextStyle(
-                        color: Pallete.gradient2,
-                        fontWeight: FontWeight.bold,
-                      ),
-                      // recognizer: TapGestureRecognizer()
-                      //   ..onTap = () =>
-                      //       Navigator.of(context).pushNamed('/sign-in')
-                    ),
+                        text: 'Sign Up',
+                        style: const TextStyle(
+                          color: Pallete.gradient2,
+                          fontWeight: FontWeight.bold,
+                        ),
+                        recognizer: TapGestureRecognizer()
+                          ..onTap = () => Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => const SignUpScreen()))),
                   ]),
             )
           ],

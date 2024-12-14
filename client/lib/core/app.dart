@@ -1,5 +1,6 @@
 import 'package:client/core/themes/theme.dart';
 import 'package:client/features/auth/screens/login_screen.dart';
+import 'package:client/features/auth/screens/signup_screen.dart';
 // import 'package:client/features/auth/screens/signup_screen.dart';
 import 'package:flutter/material.dart';
 
@@ -12,7 +13,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Flutter Demo',
       theme: AppTheme.darkThemeMode,
-      home: const LoginScreen(),
+      home: const SignUpScreen(),
     );
   }
 }

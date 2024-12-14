@@ -1,4 +1,4 @@
-import 'package:client/data/repositories/auth_repository.dart';
+import 'package:client/features/auth/repositories/auth_repository.dart';
 import 'package:flutter/material.dart';
 
 class AuthController extends ChangeNotifier {
@@ -14,10 +14,11 @@ class AuthController extends ChangeNotifier {
     notifyListeners();
 
     try {
-      final result = await _repository.signUp(email, password);
+      // final result = await _repository.signUp();
       isLoading = false;
       notifyListeners();
-      return result;
+      // return result;
+      return true;
     } catch (e) {
       isLoading = false;
       error = e.toString();
@@ -32,10 +33,11 @@ class AuthController extends ChangeNotifier {
     notifyListeners();
 
     try {
-      final result = await _repository.signIn(email, password);
+      // final result = await _repository.signIn(email, password);
       isLoading = false;
       notifyListeners();
-      return result;
+      // return result;
+      return true;
     } catch (e) {
       isLoading = false;
       error = e.toString();
