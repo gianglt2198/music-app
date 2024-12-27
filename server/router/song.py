@@ -27,7 +27,7 @@ def upload_song(song: UploadFile = File(...),
                 db: Session=Depends(get_db),
                 auth_dict=Depends(auth_middleware)):
     song_id = str(uuid.uuid4())
-    thumbnail_id = str(uuid.uuid4())
     
     song_res = cloudinary.uploader.upload(song.file, resource_type='auto', folder=f'songs/{song_id}') 
     thumbnail_res = cloudinary.uploader.upload(thumbnail.file, resource_type='image', folder=f'songs/{song_id}') 
+    
