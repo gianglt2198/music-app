@@ -1,8 +1,8 @@
-import 'package:client/features/auth/repositories/auth_repository.dart';
+import 'package:client/features/auth/repositories/auth_remote_repository.dart';
 import 'package:flutter/material.dart';
 
 class AuthController extends ChangeNotifier {
-  final AuthRepository _repository;
+  final AuthRemoteRepository _repository;
   bool isLoading = false;
   String? error;
 

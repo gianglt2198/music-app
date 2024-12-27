@@ -1,9 +1,11 @@
 import 'package:client/core/themes/app_pallete.dart';
-import 'package:client/features/auth/repositories/auth_repository.dart';
+import 'package:client/core/utils/util.dart';
+import 'package:client/core/widgets/loader.dart';
+import 'package:client/features/auth/repositories/auth_remote_repository.dart';
 import 'package:client/features/auth/controllers/auth_controler.dart';
 import 'package:client/features/auth/screens/login_screen.dart';
 import 'package:client/features/auth/viewmodel/auth_viewmodel.dart';
-import 'package:client/features/auth/widgets/custom_text_field.dart';
+import 'package:client/core/widgets/custom_text_field.dart';
 import 'package:client/features/auth/widgets/error_text.dart';
 import 'package:client/features/auth/widgets/form_container.dart';
 import 'package:client/features/auth/widgets/loading_button.dart';
@@ -23,7 +25,7 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen> {
   final _nameController = TextEditingController();
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
-  final _authController = AuthController(AuthRepository());
+  final _authController = AuthController(AuthRemoteRepository());
 
   @override
   void dispose() {
@@ -69,15 +71,8 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen> {
             password: _passwordController.text,
             name: _nameController.text,
           );
-
-      // final success = await _authController.signUp(
-      //   _emailController.text,
-      //   _passwordController.text,
-      // );
-
-      // if (success && mounted) {
-      //   // Navigator.of(context).pushReplacementNamed('/home');
-      // }
+    } else {
+      showSnackBar(context, "Missing field!");
     }
   }
 
@@ -86,56 +81,76 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen> {
     final isLoading = ref
         .watch(authViewModelProvider.select((val) => val?.isLoading == true));
 
+    ref.listen(
+      authViewModelProvider,
+      (_, next) {
+        next?.when(
+            data: (data) {
+              showSnackBar(
+                  context, 'Account created successfully! Please Login.');
+              Navigator.push(context,
+                  MaterialPageRoute(builder: (context) => const LoginScreen()));
+            },
+            error: (error, st) {
+              showSnackBar(context, error.toString());
+            },
+            loading: () {});
+      },
+    );
+
     return Scaffold(
         appBar: AppBar(),
-        body: FormContainer(formKey: _formKey, children: [
-          const Text('Sign Up.',
-              style: TextStyle(
-                fontSize: 50,
-                fontWeight: FontWeight.bold,
-              )),
-          const SizedBox(height: 20),
-          CustomTextField(
-            controller: _nameController,
-            hintText: 'Name',
-            validator: _validateName,
-          ),
-          const SizedBox(height: 20),
-          CustomTextField(
-              controller: _emailController,
-              hintText: 'Email',
-              validator: _validateEmail),
-          const SizedBox(height: 20),
-          CustomTextField(
-            controller: _passwordController,
-            hintText: 'Password',
-            isObsured: true,
-            validator: _validatePassword,
-          ),
-          const SizedBox(height: 20),
-          ErrorText(error: _authController.error),
-          LoadingButton(
-              isLoading: _authController.isLoading,
-              onPressed: _handleSignUp,
-              label: "Sign Up"),
-          const SizedBox(height: 20),
-          RichText(
-              text: TextSpan(
-                  text: 'Already have an account? ',
-                  style: Theme.of(context).textTheme.titleMedium,
-                  children: [
-                TextSpan(
-                    text: 'Sign In',
-                    style: const TextStyle(
-                      color: Pallete.gradient2,
+        body: isLoading
+            ? const Loader()
+            : FormContainer(formKey: _formKey, children: [
+                const Text('Sign Up.',
+                    style: TextStyle(
+                      fontSize: 50,
                       fontWeight: FontWeight.bold,
-                    ),
-                    recognizer: TapGestureRecognizer()
-                      ..onTap = () => Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => const LoginScreen()))),
-              ])),
-        ]));
+                    )),
+                const SizedBox(height: 20),
+                CustomTextField(
+                  controller: _nameController,
+                  hintText: 'Name',
+                  validator: _validateName,
+                ),
+                const SizedBox(height: 20),
+                CustomTextField(
+                    controller: _emailController,
+                    hintText: 'Email',
+                    validator: _validateEmail),
+                const SizedBox(height: 20),
+                CustomTextField(
+                  controller: _passwordController,
+                  hintText: 'Password',
+                  isObsured: true,
+                  validator: _validatePassword,
+                ),
+                const SizedBox(height: 20),
+                ErrorText(error: _authController.error),
+                LoadingButton(
+                    isLoading: _authController.isLoading,
+                    onPressed: _handleSignUp,
+                    label: "Sign Up"),
+                const SizedBox(height: 20),
+                RichText(
+                    text: TextSpan(
+                        text: 'Already have an account? ',
+                        style: Theme.of(context).textTheme.titleMedium,
+                        children: [
+                      TextSpan(
+                          text: 'Sign In',
+                          style: const TextStyle(
+                            color: Pallete.gradient2,
+                            fontWeight: FontWeight.bold,
+                          ),
+                          recognizer: TapGestureRecognizer()
+                            ..onTap = () => Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) =>
+                                        const LoginScreen()))),
+                    ])),
+              ]));
   }
 }

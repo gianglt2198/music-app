@@ -1,10 +1,13 @@
 import uuid
 import bcrypt
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, Header
 from database import get_db
 from models.user import User
 from schemas.auth import UserCreate, UserLogin
 from sqlalchemy.orm import Session
+import jwt
+
+from middlewares.auth_middleware import auth_middleware
 
 router = APIRouter()
 
@@ -29,5 +32,15 @@ def post_login(user: UserLogin, db: Session = Depends(get_db)):
     user_db = db.query(User).filter(User.email == user.email).first()
     if not user_db or not bcrypt.checkpw(user.password.encode('utf-8'), user_db.password):
         raise HTTPException(status_code=400, detail='Invalid email or password')
+
+    token =  jwt.encode({"id": user_db.id}, "secret", algorithm="HS256")
     
+    return {'token': token, 'user': user_db}
+
+@router.get('/')
+def current_user_data(db: Session=Depends(get_db), 
+                      user_dict = Depends(auth_middleware)):
+    user_db = db.query(User).filter(User.id == user_dict['uid']).first()
+    if not user_db:
+        raise HTTPException(404, "User not found!")
     return user_db
