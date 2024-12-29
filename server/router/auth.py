@@ -4,7 +4,7 @@ from fastapi import APIRouter, Depends, HTTPException, Header
 from database import get_db
 from models.user import User
 from schemas.auth import UserCreate, UserLogin
-from sqlalchemy.orm import Session
+from sqlalchemy.orm import Session, joinedload
 import jwt
 
 from middlewares.auth_middleware import auth_middleware
@@ -40,7 +40,9 @@ def post_login(user: UserLogin, db: Session = Depends(get_db)):
 @router.get('/')
 def current_user_data(db: Session=Depends(get_db), 
                       user_dict = Depends(auth_middleware)):
-    user_db = db.query(User).filter(User.id == user_dict['uid']).first()
+    user_db = db.query(User).filter(User.id == user_dict['uid']).options(
+        joinedload(User.favorites)
+    ).first()
     if not user_db:
         raise HTTPException(404, "User not found!")
     return user_db

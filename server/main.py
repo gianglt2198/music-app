@@ -2,9 +2,8 @@ import bcrypt
 
 from fastapi import FastAPI, HTTPException
 from models.base import Base
-from router import auth
+from router import auth, song
 from database import engine
-from server.router import song
 
 app = FastAPI()
 

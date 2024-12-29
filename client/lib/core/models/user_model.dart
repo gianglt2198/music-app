@@ -1,17 +1,22 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'dart:convert';
 
+import 'package:client/features/auth/models/fav_song_model.dart';
+import 'package:collection/collection.dart';
+
 class UserModel {
   final String id;
   final String email;
   final String name;
   final String token;
+  final List<FavSongModel> favorites;
 
   UserModel({
     required this.id,
     required this.email,
     required this.name,
     required this.token,
+    required this.favorites,
   });
 
   UserModel copyWith({
@@ -19,12 +24,14 @@ class UserModel {
     String? email,
     String? name,
     String? token,
+    List<FavSongModel>? favorites,
   }) {
     return UserModel(
       id: id ?? this.id,
       email: email ?? this.email,
       name: name ?? this.name,
       token: token ?? this.token,
+      favorites: favorites ?? this.favorites,
     );
   }
 
@@ -34,6 +41,7 @@ class UserModel {
       'email': email,
       'name': name,
       'token': token,
+      'favorites': favorites.map((x) => x.toMap()).toList(),
     };
   }
 
@@ -43,6 +51,11 @@ class UserModel {
       email: map['email'] ?? '',
       name: map['name'] ?? '',
       token: map['token'] ?? '',
+      favorites: List<FavSongModel>.from(
+        (map['favorites'] ?? []).map(
+          (x) => FavSongModel.fromMap(x as Map<String, dynamic>),
+        ),
+      ),
     );
   }
 
@@ -53,21 +66,27 @@ class UserModel {
 
   @override
   String toString() {
-    return 'UserModel(id: $id, email: $email, name: $name, token: $token)';
+    return 'UserModel(id: $id, email: $email, name: $name, token: $token, favorites: $favorites)';
   }
 
   @override
   bool operator ==(covariant UserModel other) {
     if (identical(this, other)) return true;
+    final listEquals = const DeepCollectionEquality().equals;
 
     return other.id == id &&
         other.email == email &&
         other.name == name &&
-        other.token == token;
+        other.token == token &&
+        listEquals(other.favorites, favorites);
   }
 
   @override
   int get hashCode {
-    return id.hashCode ^ email.hashCode ^ name.hashCode ^ token.hashCode;
+    return id.hashCode ^
+        email.hashCode ^
+        name.hashCode ^
+        token.hashCode ^
+        favorites.hashCode;
   }
 }

@@ -2,7 +2,7 @@ import 'package:client/core/themes/app_pallete.dart';
 import 'package:client/core/utils/util.dart';
 import 'package:client/core/widgets/loader.dart';
 import 'package:client/features/auth/repositories/auth_remote_repository.dart';
-import 'package:client/features/auth/controllers/auth_controler.dart';
+import 'package:client/features/auth/controllers/auth_controller.dart';
 import 'package:client/features/auth/screens/login_screen.dart';
 import 'package:client/features/auth/viewmodel/auth_viewmodel.dart';
 import 'package:client/core/widgets/custom_text_field.dart';
