@@ -4,6 +4,7 @@ import 'package:client/core/themes/app_pallete.dart';
 import 'package:client/core/utils/util.dart';
 import 'package:client/core/widgets/custom_text_field.dart';
 import 'package:client/core/widgets/loader.dart';
+import 'package:client/features/home/view/pages/home_page.dart';
 import 'package:client/features/home/view/widgets/audio_waves.dart';
 import 'package:client/features/home/viewmodel/home_viewmodel.dart';
 import 'package:dotted_border/dotted_border.dart';
@@ -65,6 +66,11 @@ class _UploadSongPageState extends ConsumerState<ConsumerStatefulWidget> {
                           artist: _artistController.text,
                           hexCode: _selectedColor,
                         );
+                    Navigator.of(context).push(
+                      MaterialPageRoute(
+                        builder: (context) => const HomeScreen(),
+                      ),
+                    );
                   } else {
                     showSnackBar(context, 'Missing field!');
                   }

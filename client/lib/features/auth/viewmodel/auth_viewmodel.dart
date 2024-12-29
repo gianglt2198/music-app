@@ -39,8 +39,6 @@ class AuthViewModel extends _$AuthViewModel {
       Left(value: final l) => state = AsyncValue.error(l, StackTrace.current),
       Right(value: final r) => state = AsyncValue.data(r),
     };
-
-    print(val);
   }
 
   Future<void> logInUser({
@@ -56,8 +54,6 @@ class AuthViewModel extends _$AuthViewModel {
           AsyncValue.error(l.message, StackTrace.current),
       Right(value: final r) => _loginSuccess(r),
     };
-
-    print(val);
   }
 
   AsyncValue<UserModel>? _loginSuccess(UserModel user) {
@@ -71,17 +67,19 @@ class AuthViewModel extends _$AuthViewModel {
     final token = _authLocalRepository.getToken();
     if (token != null) {
       final res = await _authRepository.getCurrentUserData(token);
+
       final val = switch (res) {
-        Left(value: final l) => state =
-            AsyncValue.error(l.message, StackTrace.current),
-        Right(value: final r) => _getDataSucess(r),
+        Left(value: final l) => state = AsyncValue.error(l, StackTrace.current),
+        Right(value: final r) => _getDataSucess(r, token),
       };
+
       return val.value;
     }
     return null;
   }
 
-  AsyncValue<UserModel> _getDataSucess(UserModel user) {
+  AsyncValue<UserModel> _getDataSucess(UserModel user, String token) {
+    user = user.copyWith(token: token);
     _currentUserNotifier.addUser(user);
     return state = AsyncValue.data(user);
   }

@@ -8,6 +8,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:fpdart/fpdart.dart';
 import 'package:http/http.dart' as http;
 import 'package:riverpod_annotation/riverpod_annotation.dart';
+import 'package:path/path.dart';
+import 'package:async/async.dart';
 
 part 'home_repository.g.dart';
 
@@ -26,7 +28,7 @@ class HomeRepository {
     required String token,
   }) async {
     try {
-      final request = http.MultipartRequest(
+      var request = http.MultipartRequest(
           'POST', Uri.parse('${ServerConstants.baseUrl}/song/upload'));
 
       request
@@ -44,7 +46,8 @@ class HomeRepository {
         });
 
       final res = await request.send();
-      if (res.statusCode != 201) {
+
+      if (res.statusCode != 200) {
         return Left(AppFailure('Failed to upload song'));
       }
 
@@ -59,7 +62,7 @@ class HomeRepository {
   }) async {
     try {
       final res = await http
-          .get(Uri.parse('${ServerConstants.baseUrl}/songs'), headers: {
+          .get(Uri.parse('${ServerConstants.baseUrl}/song/songs'), headers: {
         'Content-Type': 'application/json',
         'x-auth-token': token,
       });
@@ -118,7 +121,7 @@ class HomeRepository {
   }) async {
     try {
       final res = await http.get(
-          Uri.parse('${ServerConstants.baseUrl}/song/list/faviorite'),
+          Uri.parse('${ServerConstants.baseUrl}/song/list/favorites'),
           headers: {
             'Content-Type': 'application/json',
             'x-auth-token': token,

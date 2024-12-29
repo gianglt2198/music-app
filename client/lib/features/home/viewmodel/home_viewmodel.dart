@@ -67,7 +67,7 @@ class HomeViewModel extends _$HomeViewModel {
       songName: songName,
       artist: artist,
       hexCode: rgbToHex(hexCode),
-      token: ref.read(currentUserNotifierProvider)!.token,
+      token: ref.watch(currentUserNotifierProvider)!.token,
     );
 
     final val = switch (res) {

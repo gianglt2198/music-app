@@ -1,5 +1,6 @@
 import 'package:client/core/providers/current_song_notifier.dart';
 import 'package:client/core/themes/app_pallete.dart';
+import 'package:client/core/widgets/loader.dart';
 import 'package:client/features/home/view/pages/upload_song_page.dart';
 import 'package:client/features/home/viewmodel/home_viewmodel.dart';
 import 'package:flutter/cupertino.dart';
@@ -11,7 +12,7 @@ class LibraryPage extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    ref.watch(getAllFavoriteSongsProvider).when(
+    return ref.watch(getAllFavoriteSongsProvider).when(
           data: (data) {
             return ListView.builder(
               itemCount: data.length + 1,
@@ -71,10 +72,12 @@ class LibraryPage extends ConsumerWidget {
               },
             );
           },
-          error: (error, stackTrace) => {},
-          loading: () {},
+          error: (error, st) {
+            return Center(
+              child: Text(error.toString()),
+            );
+          },
+          loading: () => const Loader(),
         );
-
-    return Container();
   }
 }
