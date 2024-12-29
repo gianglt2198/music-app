@@ -3,7 +3,7 @@
 import uuid
 import cloudinary
 import cloudinary.uploader
-from fastapi import APIRouter, Depends, File, Form, UploadFile
+from fastapi import APIRouter, Depends, File, Form, Request, UploadFile
 from sqlalchemy.orm import Session
 from database import get_db
 from models.song import Song
@@ -31,12 +31,12 @@ def upload_song(song: UploadFile = File(...),
                 hex_code: str = Form(...),
                 db: Session=Depends(get_db),
                 auth_details=Depends(auth_middleware)):
+    
     song_id = str(uuid.uuid4())
     
     song_res = cloudinary.uploader.upload(song.file, resource_type='auto', folder=f'songs/{song_id}') 
     thumbnail_res = cloudinary.uploader.upload(thumbnail.file, resource_type='image', folder=f'songs/{song_id}') 
-
-
+    
     new_song = Song(
         id=song_id,
         song_name=song_name,
@@ -64,10 +64,10 @@ def favorite_song(fav_song: FavoriteSong,
     
     
     user_id = auth_details['uid']
-    favorite_song = db.query(Song).filter(Favorite.song_id == fav_song.song_id, Favorite.user_id == user_id).first()
+    song = db.query(Favorite).filter(Favorite.song_id == fav_song.song_id, Favorite.user_id == user_id).first()
 
-    if favorite_song:
-        db.delete(fav_song)
+    if song:
+        db.delete(song)
         db.commit()
         return {'message': False}
 

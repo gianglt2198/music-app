@@ -3,4 +3,4 @@ from pydantic import BaseModel
 
 
 class FavoriteSong(BaseModel):
-    song_id: int
+    song_id: str
